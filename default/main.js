@@ -8,14 +8,17 @@ module.exports.loop = function () {
     let upgrader_count = 0;
     let builder_count = 0;
     let hunter_count = 0;
+    let creep_charging = false;
     for(let name in Game.creeps) { 
         let creep = Game.creeps[name];                      // Loop thru all creeps
         if (creep.ticksToLive <= 250) {                     // Renew life of expiring creeps
             creep.memory.recharging = true;
+            creep_charging = true;
             creep.say("🔋")
         } 
         if(creep.memory.recharging) {   
             keepCreepAlive(creep);
+            creep_charging = true;
         } else {                                                   
             switch(creep.memory.role) {                         // Perform role-specific actions
                 case "harvester":
@@ -37,22 +40,24 @@ module.exports.loop = function () {
             }
         }
     } // END CREEP FOR LOOP
-
-    if(harvester_count < 3) {           // Restocking each creep
-        if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], ("Hvst" + Game.time), {memory: {role: "harvester"}}) == OK) {
-            console.log("Harvester spawned")
-        }
-    } else if(upgrader_count < 3) {
-        if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], ("Upgd" + Game.time), {memory: {role: "upgrader", upgrading: false}}) == OK) {
-            console.log("Upgrader spawned")
-        }
-    } else if(builder_count < 3) {
-        if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], ("Bldr" + Game.time), {memory: {role: "builder", building: false}}) == OK) {
-            console.log("Builder spawned")
-        }
-    } else if(hunter_count < 5) {
-        if(Game.spawns["spn_main"].spawnCreep([ATTACK, ATTACK, MOVE, MOVE, TOUGH, TOUGH,], ("Hntr" + Game.time), {memory: {role: "hunter"}}) == OK) {
-            console.log("Hunter spawned")
+    
+    if(!creep_charging) {
+        if(harvester_count < 4) {           // Restocking each creep
+            if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], ("Hvst" + Game.time), {memory: {role: "harvester"}}) == OK) {
+                console.log("Harvester spawned")
+            }
+        } else if(upgrader_count < 2) {
+            if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], ("Upgd" + Game.time), {memory: {role: "upgrader", upgrading: false}}) == OK) {
+                console.log("Upgrader spawned")
+            }
+        } else if(builder_count < 2) {
+            if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], ("Bldr" + Game.time), {memory: {role: "builder", building: false}}) == OK) {
+                console.log("Builder spawned")
+            }
+        } else if(hunter_count < 3) {
+            if(Game.spawns["spn_main"].spawnCreep([ATTACK, ATTACK, MOVE, MOVE, TOUGH, TOUGH,], ("Hntr" + Game.time), {memory: {role: "hunter"}}) == OK) {
+                console.log("Hunter spawned")
+            }
         }
     }
 }

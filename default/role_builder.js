@@ -41,6 +41,15 @@ function build(creep) {
         }
     } else {
         let targets = creep.room.find(FIND_MY_STRUCTURES);
+        let urgent_rep = targets[0];
+        for(let t in targets) {
+            if((t.hitsMax - t.hits) < (urgent_rep.hitsMax - urgent_rep.hits)) {
+                urgent_rep = t;
+            }
+        }
+        if(creep.repair(urgent_rep) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(urgent_rep);
+        }
     }
 }
 
