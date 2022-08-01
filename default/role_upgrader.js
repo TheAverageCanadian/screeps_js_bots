@@ -12,7 +12,7 @@ var role_upgrader = {
 
         if(creep.memory.upgrading && creep.store.energy == 0) { // upgrading and out of energy
             creep.memory.upgrading = false;                     //go get more energy
-            creep.say("⛏ Refill");
+            creep.say("⛏");
             get_energy(creep);
         } else if(creep.memory.upgrading) {                 //upgrading and not out of energy
             upgrade_controller(creep);                      // keep upgrading
@@ -20,7 +20,7 @@ var role_upgrader = {
             get_energy(creep);                              // keep getting energy
         }  else {                                           //not upgrading, energy full
             creep.memory.upgrading = true;                  // start upgrading
-            creep.say("🛠 Upgrade");
+            creep.say("🛠");
             upgrade_controller(creep);
         }
     }
@@ -40,6 +40,7 @@ function upgrade_controller(creep) {
             break;
         case ERR_NOT_ENOUGH_RESOURCES:
             getEnergy(creep);
+            break;
     }
 }
 

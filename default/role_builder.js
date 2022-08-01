@@ -12,7 +12,7 @@ var role_builder = {
 
         if(creep.memory.building && creep.store.energy == 0) { // building and out of energy
             creep.memory.building = false;                     //go get more energy
-            creep.say("⛏ Refill");
+            creep.say("⛏");
             get_energy(creep);
         } else if(creep.memory.building) {                 //building and not out of energy
             build(creep);                                   // keep building
@@ -20,7 +20,7 @@ var role_builder = {
             get_energy(creep);                              // keep getting energy
         }  else {                                           //not building, energy full
             creep.memory.building = true;                  // start building
-            creep.say("🛠 Build");
+            creep.say("🛠");
             build(creep);
         }
     }
@@ -34,9 +34,13 @@ function get_energy(creep) {
 }
 
 function build(creep) {
-    let target = creep.pos.findClosestByPath(FIND_MY_CONSTRUCTION_SITES, )
-    if(creep.build(target) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(target);
+    let target = creep.pos.findClosestByPath(FIND_MY_CONSTRUCTION_SITES);
+    if(target != null) {
+        if(creep.build(target) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(target);
+        }
+    } else {
+        let targets = creep.room.find(FIND_MY_STRUCTURES);
     }
 }
 
