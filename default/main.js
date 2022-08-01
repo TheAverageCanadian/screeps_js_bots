@@ -2,12 +2,14 @@ let role_harvester = require("role_harvester");
 let role_upgrader = require("role_upgrader");
 let role_builder = require("role_builder");
 let role_hunter = require("role_hunter");
+let role_carrier = require("role_carrier");
 
 module.exports.loop = function () {
     let harvester_count = 0;
     let upgrader_count = 0;
     let builder_count = 0;
     let hunter_count = 0;
+    let carrier_count = 0;
     let creep_charging = false;
     for(let name in Game.creeps) { 
         let creep = Game.creeps[name];                      // Loop thru all creeps
@@ -37,14 +39,22 @@ module.exports.loop = function () {
                     hunter_count++;
                     role_hunter.run(creep);
                     break;
+                case "carrier":
+                    carrier_count++;
+                    role_carrier.run(creep);
+                    break;
             }
         }
     } // END CREEP FOR LOOP
     
     if(!creep_charging) {
-        if(harvester_count < 4) {           // Restocking each creep
+        if(harvester_count < 2) {           // Restocking each creep
             if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], ("Hvst" + Game.time), {memory: {role: "harvester"}}) == OK) {
                 console.log("Harvester spawned")
+            }
+        } else if(carrier_count < 2) {
+            if(Game.spawns["spn_main"].spawnCreep([ATTACK, ATTACK, MOVE, MOVE, TOUGH, TOUGH,], ("crry" + Game.time), {memory: {role: "carrier"}}) == OK) {
+                console.log("Hunter spawned")
             }
         } else if(upgrader_count < 2) {
             if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], ("Upgd" + Game.time), {memory: {role: "upgrader", upgrading: false}}) == OK) {

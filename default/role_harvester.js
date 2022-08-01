@@ -15,12 +15,13 @@ var role_harvester = {
                 creep.moveTo(nSource);
             }
         } else { //creep is full
-            let targets = creep.room.find(FIND_MY_STRUCTURES, {
-                filter: (structure) => {
-                    return ((structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) 
-                            && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0));
-                }
-            })
+            creep.drop(RESOURCE_ENERGY, creep.store.energy);
+            // let targets = creep.room.find(FIND_MY_STRUCTURES, {
+            //     filter: (structure) => {
+            //         return ((structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) 
+            //                 && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0));
+            //     }
+            // })
             if(targets.length != 0){
                 let target = creep.pos.findClosestByPath(targets);
                 if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {

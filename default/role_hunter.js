@@ -16,10 +16,15 @@ var role_hunter = {
 };
 
 function get_energy(creep) {
-    let nSource = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE, {algorithm: "astar"});
-    if(creep.harvest(nSource) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(nSource);
+    let nDrop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+    if(creep.pickup(nDrop) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(nDrop);
     }
+
+    // let nSource = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE, {algorithm: "astar"});
+    // if(creep.harvest(nSource) == ERR_NOT_IN_RANGE) {
+    //     creep.moveTo(nSource);
+    // }
 }
 
 function hunt(creep) {
