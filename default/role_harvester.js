@@ -22,12 +22,12 @@ var role_harvester = {
             //                 && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0));
             //     }
             // })
-            if(targets.length != 0){
-                let target = creep.pos.findClosestByPath(targets);
-                if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
-                }
-            }
+            // if(targets.length != 0){
+            //     let target = creep.pos.findClosestByPath(targets);
+            //     if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            //         creep.moveTo(target);
+            //     }
+            // }
         }
     }
 };

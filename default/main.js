@@ -29,11 +29,11 @@ module.exports.loop = function () {
                     break;
                 case "upgrader":
                     upgrader_count++;
-                    role_upgrader.run(creep);
+                    //role_upgrader.run(creep);
                     break;
                 case "builder":
                     builder_count++;
-                    role_builder.run(creep);
+                    //role_builder.run(creep);
                     break;
                 case "hunter":
                     hunter_count++;
@@ -49,12 +49,12 @@ module.exports.loop = function () {
     
     if(!creep_charging) {
         if(harvester_count < 2) {           // Restocking each creep
-            if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], ("Hvst" + Game.time), {memory: {role: "harvester"}}) == OK) {
+            if(Game.spawns["spn_main"].spawnCreep([WORK,WORK,MOVE,MOVE], ("Hvst" + Game.time), {memory: {role: "harvester", carry_standby: false}}) == OK) {
                 console.log("Harvester spawned")
             }
         } else if(carrier_count < 2) {
-            if(Game.spawns["spn_main"].spawnCreep([ATTACK, ATTACK, MOVE, MOVE, TOUGH, TOUGH,], ("crry" + Game.time), {memory: {role: "carrier"}}) == OK) {
-                console.log("Hunter spawned")
+            if(Game.spawns["spn_main"].spawnCreep([CARRY, CARRY, CARRY, MOVE, MOVE,], ("crry" + Game.time), {memory: {role: "carrier"}}) == OK) {
+                console.log("Carrier spawned")
             }
         } else if(upgrader_count < 2) {
             if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], ("Upgd" + Game.time), {memory: {role: "upgrader", upgrading: false}}) == OK) {

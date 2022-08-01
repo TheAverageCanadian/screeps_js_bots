@@ -12,6 +12,14 @@ var role_carrier = {
         if(creep.store.energy < creep.store.getCapacity()) { // Creep's inv not full
             get_energy(creep);
         } else { //creep is full
+            let miner = creep.pos.findClosestByPath(FIND_MY_CREEPS, {
+                filter: (cr) => {
+                    return ((cr.memory.role == "harvester") 
+                            && (cr.memory.carry_standby == true) // TODO This shit has got to be reworked, it's borked.
+                            && cr.pos.getRangeTo(creep) < 2);
+                }
+            })
+            if (miner != null) {miner.memory.carry_standby = false;}
             let targets = creep.room.find(FIND_MY_STRUCTURES, {
                 filter: (structure) => {
                     return ((structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) 
@@ -29,9 +37,20 @@ var role_carrier = {
 };
 
 function get_energy(creep) {
-    let nDrop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
-    if(creep.pickup(nDrop) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(nDrop);
+    let miner = creep.pos.findClosestByPath(FIND_MY_CREEPS, {
+        filter: (creep) => {
+            return ((creep.memory.role == "harvester") 
+                    && (creep.memory.carry_standby == false));
+        }
+    })
+    if(creep.pos.getRangeTo(miner) > 1) {
+        creep.moveTo(miner);
+    } else {
+        miner.memory.carry_standby = true;
+        let nDrop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+        if(creep.pickup(nDrop) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(nDrop);
+        }
     }
 }
 
