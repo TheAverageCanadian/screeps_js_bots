@@ -9,24 +9,26 @@
 var role_carrier = {
     /** @param {Creep} creep  **/
     run: function(creep) {
+        if(creep.memory.paired_harv == null) { // if unpaired, pair with a harvester
+            pairWithHarv(creep);
+        }
         if(creep.store.energy < creep.store.getCapacity()) { // Creep's inv not full
             get_energy(creep);
         } else { //creep is full
-            let miner = creep.pos.findClosestByPath(FIND_MY_CREEPS, {
-                filter: (cr) => {
-                    return ((cr.memory.role == "harvester") 
-                            && (cr.memory.carry_standby == true) // TODO This shit has got to be reworked, it's borked.
-                            && cr.pos.getRangeTo(creep) < 2);
-                }
-            })
-            if (miner != null) {miner.memory.carry_standby = false;}
-            let targets = creep.room.find(FIND_MY_STRUCTURES, {
+            let targets = creep.room.find(FIND_MY_STRUCTURES, { // find extensions and spawns that are not yet full
                 filter: (structure) => {
                     return ((structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) 
                             && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0));
                 }
             })
-            if(targets.length != 0){
+            if(targets.length == 0){ // if no unfilled extensions or spawns can be found, find containers or storages instead
+                targets = creep.room.find(FIND_MY_STRUCTURES, { 
+                    filter: (structure => {
+                        return ((structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE)
+                                && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0));
+                    })
+                })
+            } else { // move to the closest target and fill it
                 let target = creep.pos.findClosestByPath(targets);
                 if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
@@ -35,21 +37,39 @@ var role_carrier = {
         }
     }
 };
-
-function get_energy(creep) {
+function pairWithHarv(creep) {
     let miner = creep.pos.findClosestByPath(FIND_MY_CREEPS, {
         filter: (creep) => {
             return ((creep.memory.role == "harvester") 
-                    && (creep.memory.carry_standby == false));
+                    && (creep.memory.paired_crry == ""));
         }
     })
+    if(miner != null) {
+        creep.memory.paired_harv = miner.name;
+        miner.memory.paired_crry = creep.name;  
+    }
+}
+
+function unpairWithHarv(creep) {
+    Game.creeps[creep.memory.paired_harv].memory.paired_crry = "";
+    creep.memory.paired_harv = "";
+}
+
+
+
+function get_energy(creep) {
+    let miner = Game.creeps[creep.memory.paired_harv];
     if(creep.pos.getRangeTo(miner) > 1) {
         creep.moveTo(miner);
     } else {
-        miner.memory.carry_standby = true;
-        let nDrop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
-        if(creep.pickup(nDrop) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(nDrop);
+        //let nDrop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+        let drops = creep.room.find(FIND_DROPPED_RESOURCES);
+        let bDrop = drops[0];
+        for(let d in drops) {
+            if(d.amount > bDrop.amount) {bDrop = d;}
+        }
+        if(creep.pickup(bDrop) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(bDrop);
         }
     }
 }
