@@ -27,7 +27,7 @@ var role_upgrader = {
 };
 
 function get_energy(creep) {
-    let nDrop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+    let nDrop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES); // TODO: Prefer taking from containers/storages instead of dropped shit
     if(creep.pickup(nDrop) == ERR_NOT_IN_RANGE) {
         creep.moveTo(nDrop);
     }

@@ -4,7 +4,7 @@ let role_builder = require("role_builder");
 let role_hunter = require("role_hunter");
 let role_carrier = require("role_carrier");
 
-module.exports.loop = function () {
+module.exports.loop = function () { //TODO idea: work manager that globally looks at all creeps and assigns them a task to stick to, such as mining a particular source or carrying to/from a particular harvester/container
     let harvester_count = 0;
     let upgrader_count = 0;
     let builder_count = 0;
@@ -48,17 +48,17 @@ module.exports.loop = function () {
     } // END CREEP FOR LOOP
     
     if(!creep_charging) {
-        if(harvester_count < 4) {           // Restocking each creep
+        if(harvester_count < 3) {           // Restocking each creep
             let tmpName = "Hsvt" + Game.time;
             if(Game.spawns["spn_main"].spawnCreep([WORK,WORK,MOVE,MOVE], (tmpName), {memory: {role: "harvester", paired_crry: ""}}) == OK) {
                 console.log("Harvester " + tmpName + " spawning");
             }
-        } else if(carrier_count < 2) {
+        } else if(carrier_count < 3) {
             let tmpName = "Crry" + Game.time;
             if(Game.spawns["spn_main"].spawnCreep([CARRY, CARRY, CARRY, MOVE, MOVE,], (tmpName), {memory: {role: "carrier", paired_harv: ""}}) == OK) {
                 console.log("Carrier " + tmpName + " spawning");
             }
-        } else if(upgrader_count < 2) {
+        } else if(upgrader_count < 1) {
             let tmpName = "Upgd" + Game.time;
             if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], (tmpName), {memory: {role: "upgrader", upgrading: false}}) == OK) {
                 console.log("Upgrader " + tmpName + " spawning");
@@ -68,12 +68,12 @@ module.exports.loop = function () {
             if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], (tmpName), {memory: {role: "builder", building: false}}) == OK) {
                 console.log("Builder " + tmpName + "spawning");
             }
-        }// else if(hunter_count < 3) {
-        //     let tmpName = "Hntr" + Game.time;
-        //     if(Game.spawns["spn_main"].spawnCreep([ATTACK, ATTACK, MOVE, MOVE, TOUGH, TOUGH,], (tmpName), {memory: {role: "hunter"}}) == OK) {
-        //         console.log("Hunter " + tmpName + "spawned");
-        //     }
-        // }
+        } else if(hunter_count < 2) {
+            let tmpName = "Hntr" + Game.time;
+            if(Game.spawns["spn_main"].spawnCreep([ATTACK, ATTACK, MOVE, MOVE, TOUGH, TOUGH,], (tmpName), {memory: {role: "hunter"}}) == OK) {
+                console.log("Hunter " + tmpName + "spawned");
+            }
+        }
     }
 }
 
