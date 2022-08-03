@@ -22,17 +22,16 @@ var role_carrier = {
                 }
             })
             if(targets.length == 0){ // if no unfilled extensions or spawns can be found, find containers or storages instead
-                targets = creep.room.find(FIND_MY_STRUCTURES, { 
-                    filter: (structure => {
+                targets = creep.room.find(FIND_STRUCTURES, { 
+                    filter: (structure) => {
                         return ((structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE)
-                                && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0));
-                    })
+                                && (structure.store.getFreeCapacity() > 0));
+                    }
                 })
-            } else { // move to the closest target and fill it
-                let target = creep.pos.findClosestByPath(targets);
-                if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
-                }
+            }
+            let target = creep.pos.findClosestByPath(targets);
+            if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
             }
         }
     }
