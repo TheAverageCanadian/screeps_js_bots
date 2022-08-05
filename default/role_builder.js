@@ -27,11 +27,21 @@ var role_builder = {
 };
 
 function get_energy(creep) {
-    let nDrop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);  // TODO: Prefer taking from containers/storages instead of dropped shit
-    if(creep.pickup(nDrop) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(nDrop);
+    let target = creep.pos.findClosestByPath(FIND_STRUCTURES, { 
+        filter: (structure) => {
+            return ((structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE)
+                    && (structure.store.getUsedCapacity() > 0));
+        }
+    })
+    if(target == null) {
+        target = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+        if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(target);
+        }
     }
-    
+    if(creep.withdraw(target, RESOURCE_ENERGY, creep.store.getFreeCapacity()) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(target);
+    }
     // let nSource = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE, {algorithm: "astar"});
     // if(creep.harvest(nSource) == ERR_NOT_IN_RANGE) {
     //     creep.moveTo(nSource);
@@ -45,7 +55,7 @@ function build(creep) {
             creep.moveTo(target);
         }
     } else {
-        let targets = creep.room.find(FIND_MY_STRUCTURES);
+        let targets = creep.room.find(FIND_STRUCTURES);
         let urgent_rep = targets[0];
         for(let t in targets) {
             if((t.hitsMax - t.hits) < (urgent_rep.hitsMax - urgent_rep.hits)) {

@@ -58,19 +58,19 @@ module.exports.loop = function () { //TODO idea: work manager that globally look
             if(Game.spawns["spn_main"].spawnCreep([CARRY, CARRY, CARRY, MOVE, MOVE,], (tmpName), {memory: {role: "carrier", paired_harv: ""}}) == OK) {
                 console.log("Carrier " + tmpName + " spawning");
             }
-        } else if(upgrader_count < 1) {
+        } else if(upgrader_count < 3) {
             let tmpName = "Upgd" + Game.time;
             if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], (tmpName), {memory: {role: "upgrader", upgrading: false}}) == OK) {
                 console.log("Upgrader " + tmpName + " spawning");
             }
-        } else if(builder_count < 2) {
+        } else if(builder_count < 3) {
             let tmpName = "Bldr" + Game.time;
             if(Game.spawns["spn_main"].spawnCreep([WORK,CARRY,MOVE], (tmpName), {memory: {role: "builder", building: false}}) == OK) {
                 console.log("Builder " + tmpName + "spawning");
             }
-        } else if(hunter_count < 2) {
+        } else if(hunter_count < 5) {
             let tmpName = "Hntr" + Game.time;
-            if(Game.spawns["spn_main"].spawnCreep([ATTACK, ATTACK, MOVE, MOVE, TOUGH, TOUGH,], (tmpName), {memory: {role: "hunter"}}) == OK) {
+            if(Game.spawns["spn_main"].spawnCreep([ATTACK, ATTACK, MOVE, MOVE, TOUGH, TOUGH], (tmpName), {directions: [TOP, TOP, TOP], memory: {role: "hunter"}}) == OK) {
                 console.log("Hunter " + tmpName + "spawned");
             }
         }
@@ -78,7 +78,8 @@ module.exports.loop = function () { //TODO idea: work manager that globally look
 }
 
 function keepCreepAlive(creep) {
-    if(Game.spawns["spn_main"].renewCreep(creep) == ERR_NOT_IN_RANGE) {
+    if(Game.spawns["spn_main"].renewCreep(creep) != OK) {
+        console.log(Game.spawns["spn_main"].renewCreep(creep));
         creep.moveTo(Game.spawns["spn_main"]);
     }
     if(creep.ticksToLive > 1200) {
